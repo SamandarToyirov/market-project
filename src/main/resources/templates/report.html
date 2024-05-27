@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Report page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .button-container {
+      margin-bottom: 20px;
+    }
+    .report-button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    .report-button:hover {
+      background-color: #ddd;
+    }
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      display: none;
+    }
+    .report-table th, .report-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    .report-table th {
+      background-color: #f4f4f4;
+    }
+    .active {
+      display: table;
+    }
+    /* Specific styles for each table */
+    #salesReport {
+      border: 2px solid #4CAF50;
+    }
+    #salesReport th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    #balanceReport {
+      border: 2px solid #2196F3;
+    }
+    #balanceReport th {
+      background-color: #2196F3;
+      color: white;
+    }
+    #profitReport {
+      border: 2px solid #FF9800;
+    }
+    #profitReport th {
+      background-color: #FF9800;
+      color: white;
+    }
+  </style>
+
+</head>
+<body>
+
+<div class="button-container">
+  <button class="report-button" onclick="showTable('salesReport')">Sales Report</button>
+  <button class="report-button" onclick="showTable('balanceReport')">Balance Report</button>
+  <button class="report-button" onclick="showTable('profitReport')">Profit Report</button>
+</div>
+
+<table id="salesReport" class="report-table">
+  <thead>
+  <tr>
+    <th>Product Name</th>
+    <th>Total Sales</th>
+    <th>Total Sales Amount</th>
+    <th>Total Sales Price</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr th:each="saleReport:${saleRepors}">
+      <td th:text="${saleReport.name}"></td>
+      <td th:text="${saleReport.saleCount}"></td>
+      <td th:text="${saleReport.saleSumm}"></td>
+      <td th:text="${saleReport.totalSum}"></td>
+    </tr>
+  </tbody>
+</table>
+
+<table id="balanceReport" class="report-table">
+  <thead>
+  <tr>
+    <th>Product Name</th>
+    <th>Remaining Amount</th>
+  </tr>
+  </thead>
+  <tbody>
+      <tr th:each="balanceReport :${balanceReports}">
+        <td th:text="${balanceReport.name}"></td>
+        <td th:text="${balanceReport.remain}"></td>
+      </tr>
+  </tbody>
+</table>
+
+<table id="profitReport" class="report-table">
+  <thead>
+  <tr>
+    <th>Product Name</th>
+    <th>Profit</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr th:each="productProfit : ${productProfits}">
+        <td th:text="${productProfit.getName()}"></td>
+        <td th:text="${productProfit.getProfit()}"></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  function showTable(tableId) {
+    // Hide all tables
+    var tables = document.querySelectorAll('.report-table');
+    tables.forEach(function(table) {
+      table.classList.remove('active');
+    });
+    // Show the selected table
+    document.getElementById(tableId).classList.add('active');
+  }
+</script>
+
+
+</body>
+</html>

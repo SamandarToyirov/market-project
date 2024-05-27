@@ -1,0 +1,357 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Sales manager</title>-->
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #f0f0f0;-->
+<!--            padding-top: 20px;-->
+<!--        }-->
+<!--        .sidebar {-->
+<!--            background-color: #007BFF;-->
+<!--            color: #fff;-->
+<!--            min-height: 100vh;-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        .search-input {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        .list-group-item {-->
+<!--            cursor: pointer;-->
+<!--        }-->
+<!--        .product-container {-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        .product {-->
+<!--            background-color: #fff;-->
+<!--            padding: 20px;-->
+<!--            margin-bottom: 20px;-->
+<!--            border-radius: 5px;-->
+<!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        .product img {-->
+<!--            max-width: 100%;-->
+<!--            height: auto;-->
+<!--            border: 1px solid #ccc;-->
+<!--            border-radius: 5px;-->
+<!--        }-->
+<!--        .product-details {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .product-details h5 {-->
+<!--            margin-bottom: 0;-->
+<!--            margin-right: 10px;-->
+<!--        }-->
+<!--        .btn-add-to-basket {-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .basket {-->
+<!--            background-color: #fff;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 5px;-->
+<!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        .basket-list {-->
+<!--            list-style-type: none;-->
+<!--            padding: 0;-->
+<!--        }-->
+<!--        .basket-item {-->
+<!--            border-bottom: 1px solid #ccc;-->
+<!--            padding: 10px 0;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+<!--        .basket-item:last-child {-->
+<!--            border-bottom: none;-->
+<!--            margin-bottom: 0;-->
+<!--        }-->
+<!--        .btn-remove {-->
+<!--            margin-left: 10px;-->
+<!--        }-->
+<!--        .total-sum {-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .btn-purchase {-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+
+<!--<div class="container-fluid">-->
+<!--    <div class="row">-->
+
+
+
+<!--        <div  class="col-2">-->
+<!--            <div   class=" border-right" style="min-height: 100vh; background-color: darkblue;">-->
+<!--                <form action="/category/search" method="get">-->
+<!--                    <div class="search-container">-->
+<!--                        <label>-->
+<!--                            <input name="search" type="text" class="input-group" placeholder="Search category...">-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <button type="submit" class="btn btn-success">Search</button>-->
+<!--                        <a href="/" class="btn btn-primary">Refresh</a>-->
+<!--                    </div>-->
+<!--                </form>-->
+
+<!--                <div class="list-group">-->
+<!--                    <a th:href="|/sale?categoryId=${category.id}|" th:each="category : ${categories}"-->
+<!--                       th:text="${category.name}"-->
+<!--                       class=" py-3 text-center text-white"></a>-->
+
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div  class="col-2">-->
+<!--            <div style="background-color: #1e7e34;" th:if="${ products!=null }" >-->
+
+<!--                <form action="/product/search" method="get">-->
+<!--                    <input name="categoryId" th:value="${categoryId}" type="hidden">-->
+<!--                    <div class="search-container">-->
+<!--                        <label>-->
+<!--                            <input name="search" type="text" class="input-group" placeholder="Search category...">-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <button type="submit" class="btn btn-success">Search</button>-->
+<!--                        <a th:href="|/sale?categoryId=${categoryId}|" class="btn btn-primary">Refresh</a>-->
+<!--                    </div>-->
+<!--                </form>-->
+
+<!--                <div class="list-group ">-->
+<!--                    <a th:href="|/sale?categoryId=${categoryId}&productId=${product.id}|" class="py-3 text-center text-white" th:each="product : ${products}" th:text="${product.name}"></a>-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="col-8">-->
+
+<!--            <div class="container">-->
+<!--                <div th:if="${basket!=null}" class="top-part">-->
+<!--                    <h2>Basket</h2>-->
+<!--                    <ul id="basket-list">-->
+<!--                            <li th:each="basketProduct:${basket}">-->
+<!--                              <p th:text="${basketProduct.name}"></p>-->
+<!--                              <p th:text="|Narxi: ${basketProduct.price}|"></p>-->
+<!--                              <p th:text="|Soni: ${basketProduct.amount}|"></p>-->
+<!--                              <p th:text="|Summ: ${basketProduct.amount*basketProduct.price}|"></p>-->
+<!--                                <a th:href="|/basket/remove?productId=${basketProduct.getProductId()}|" class="btn btn-danger" href="">Remove</a>-->
+<!--                            </li>-->
+<!--                    </ul>-->
+<!--                    <h5 th:text="|Total summa: ${totalSum}|"></h5>-->
+
+<!--                    <a class="btn btn-success" href="/basket/purchase">Purchase</a>-->
+
+<!--                </div>-->
+<!--                <div class="bottom-part" th:if="${product!=null && productReport!=null}">-->
+<!--                    <h2>Product</h2>-->
+<!--                    <p class="my-3 mx-3 ml-3" th:text="${productReport.name}"></p>-->
+<!--                    <div class="product">-->
+<!--                        <img th:if="${product.attachment!=null}"  th:src="|/file/show?attachmentId=${product.attachment.id}|" alt="No photo">-->
+<!--                        <img th:if="${product.attachment==null}"  alt="No photo">-->
+
+<!--                        <h5 th:text="|Remain:${productReport.remain}|"></h5>-->
+<!--                        <h5 th:text="|Price:${productReport.price}|"></h5>-->
+<!--                        <a href="/product/sale?sign=plus" class="btn btn-success">+</a>-->
+<!--                        <p th:text="${productReport.amount}"></p>-->
+<!--                        <a href="/product/sale?sign=minus" class="btn btn-danger">-</a>-->
+
+<!--                        <a href="/basket/add" class="btn btn-primary">Add to basket</a>-->
+
+<!--                    </div>-->
+
+<!--                    <div th:if="${productReport==null}">-->
+<!--                        <h3 class="text-center">No product </h3>-->
+<!--                    </div>-->
+
+<!--                    <div>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+
+
+<!--    </div>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Manager</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .sidebar {
+            background-color: #007BFF;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn-search {
+            margin-top: 10px;
+            width: 100%;
+        }
+        .list-group-item {
+            cursor: pointer;
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            text-align: center;
+        }
+        .list-group-item:hover {
+            background-color: #0056b3;
+        }
+        .product-container {
+            padding: 20px;
+        }
+        .product {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .product-details {
+            margin-top: 20px;
+        }
+        .product-details h5 {
+            margin-bottom: 0;
+            margin-right: 10px;
+        }
+        .btn-add-to-basket {
+            margin-top: 20px;
+        }
+        .basket {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .basket-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .basket-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+        .basket-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .btn-remove {
+            margin-left: 10px;
+        }
+        .total-sum {
+            margin-top: 20px;
+        }
+        .btn-purchase {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <a href="/logout">Log out</a>
+    <div class="row">
+        <div class="col-2 sidebar">
+            <form action="/category/sale/search" method="get" class="search-container">
+                <input name="search" type="text" placeholder="Search category...">
+                <button type="submit" class="btn btn-success btn-search">Search</button>
+                <a href="/" class="btn btn-primary btn-search">Refresh</a>
+            </form>
+            <div class="list-group">
+                <a th:href="|/sale?categoryId=${category.id}|" th:each="category : ${categories}" th:text="${category.name}" class="list-group-item"></a>
+            </div>
+        </div>
+        <div class="col-2 sidebar" style="background-color: beige;" th:if="${products!=null}">
+            <form action="/product/sale/search" method="get" class="search-container">
+                <input name="categoryId" th:value="${categoryId}" type="hidden">
+                <input name="search" type="text" placeholder="Search product...">
+                <button type="submit" class="btn btn-success btn-search">Search</button>
+                <a th:href="|/sale?categoryId=${categoryId}|" class="btn btn-primary btn-search">Refresh</a>
+            </form>
+            <div class="list-group">
+                <a th:href="|/sale?categoryId=${categoryId}&productId=${product.id}|" th:each="product : ${products}" th:text="${product.name}" class="list-group-item"></a>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="container">
+                <div th:if="${basket!=null}" class="basket">
+                    <h2>Basket</h2>
+                    <ul class="basket-list">
+                        <li th:each="basketProduct : ${basket}" class="basket-item">
+                            <div class="row">
+                                <div class="col-2" th:text="${basketProduct.name}"></div>
+                                <div class="col-2" th:text="|Price: ${basketProduct.price}|"></div>
+                                <div class="col-2" th:text="|Amount: ${basketProduct.amount}|"></div>
+                                <div class="col-2" th:text="|Total: ${basketProduct.amount * basketProduct.price}|"></div>
+                                <div class="col-2">
+                                    <a  th:href="|/basket/remove?productId=${basketProduct.getProductId()}|" class=" btn btn-danger btn-remove">Remove</a>
+                                </div>
+                            </div>
+                            </li>
+                    </ul>
+                    <h5 th:text="|Total: ${totalSum}|"></h5>
+                    <a th:if="${!basket.isEmpty()}" class="btn btn-success btn-purchase" href="/basket/purchase">Purchase</a>
+                </div>
+                <div th:if="${product!=null && productReport!=null}" class="product-container">
+                    <h2>Product</h2>
+                    <div class="product">
+                        <p th:text="${productReport.name}"></p>
+                        <img th:if="${product.attachment!=null}" th:src="|/file/show?attachmentId=${product.attachment.id}|" alt="No photo">
+                        <img th:if="${product.attachment==null}" src="/path/to/default-image.jpg" alt="No photo">
+                        <div class="product-details">
+                            <h5 th:text="|Remaining: ${productReport.remain}|"></h5>
+                            <h5 th:text="|Price: ${productReport.price}|"></h5>
+                            <a href="/product/sale?sign=plus" class="btn btn-success">+</a>
+                            <p th:text="${productReport.amount}"></p>
+                            <a href="/product/sale?sign=minus" class="btn btn-danger">-</a>
+                            <a href="/basket/add" class="btn btn-primary btn-add-to-basket">Add to basket</a>
+                        </div>
+                    </div>
+                    <div th:if="${productReport==null}">
+                        <h3 class="text-center">No product</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

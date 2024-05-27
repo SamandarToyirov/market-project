@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container-fluid {
+            padding: 20px;
+        }
+        .row.no-gutters {
+            margin-right: 0;
+            margin-left: 0;
+        }
+        .row.no-gutters > [class*='col-'] {
+            padding-right: 0;
+            padding-left: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        thead {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            font-size: 1.1em;
+        }
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .product-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            display: inline-block;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        .file-input {
+            display: none;
+        }
+        .sidebar {
+            background-color: rgb(128, 128, 128);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            color: white;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: palegoldenrod;
+        }
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        .search-button {
+            padding: 8px 10px; /* Adjusted padding for smaller size */
+            font-size: 14px;   /* Adjusted font size for smaller button */
+            border: 1px solid #ccc;
+            border-left: none;
+            background-color: #d3d9df;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #45a049;
+        }
+        .card-header a {
+            display: block;
+            padding: 15px;
+            color: darkblue;
+            text-decoration: none;
+            text-align: center;
+        }
+        .card-header a:hover {
+            background-color: #e83e8c;
+        }
+        .btn-primary, .btn-success {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <a class="btn btn-primary my-2" href="/report">Report</a>
+    <a href="/logout">Log out</a>
+    <div class="row no-gutters">
+        <div class="col-3">
+            <div class="sidebar">
+                <form action="/category/search" method="get" class="mb-4">
+                    <div class="search-container">
+                        <input name="search" type="text" class="search-input" placeholder="Search category...">
+                        <button type="submit" class="search-button">Search</button>
+                    </div>
+                    <div>
+                        <a href="/" class="btn btn-primary w-100">Refresh</a>
+                    </div>
+                </form>
+                <div class="list-group">
+                    <a th:href="|/?categoryId=${category.id}|" th:each="category : ${categories}" th:text="${category.name}" class="list-group-item list-group-item-action text-dark"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="sidebar" style="background-color: #686868;" th:if="${products!=null}">
+                <form action="/product/search" method="get" class="mb-4">
+                    <input name="categoryId" th:value="${categoryId}" type="hidden">
+                    <div class="search-container">
+                        <input name="search" type="text" class="search-input" placeholder="Search product...">
+                        <button type="submit" class="search-button">Search</button>
+                    </div>
+                    <div>
+                        <a th:href="|/?categoryId=${categoryId}|" class="btn btn-primary w-100">Refresh</a>
+                    </div>
+                </form>
+                <div class="list-group">
+                    <a  th:href="|/?categoryId=${categoryId}&productId=${product.id}|" th:each="product : ${products}" th:text="${product.name}" class="list-group-item list-group-item-action text-dark"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div th:if="${productId!=null}">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-around">
+                        <a th:href="|/?categoryId=${categoryId}&productId=${productId}&button=income|" class="btn btn-toolbar text-dark">Income</a>
+                        <a th:href="|/?categoryId=${categoryId}&productId=${productId}&button=sale|" class="btn btn-toolbar text-dark">Sales</a>
+                        <a th:href="|/?categoryId=${categoryId}&productId=${productId}&button=info|" class="btn btn-toolbar text-dark">Product Info</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#strings.equals(button,'info')}">
+                            <a class="btn btn-primary mb-4" href="/product/add">Add product</a>
+                            <form action="/product/edit" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <div class="form-group" th:if="${product.attachment!=null}">
+                                    <label for="product-photo">Product Photo:</label><br>
+                                    <label for="photo-input">
+                                        <img th:src="|/file/show?attachmentId=${product.attachment.id}|" alt="Product Photo" id="product-photo" class="product-photo">
+                                    </label>
+                                    <input name="file" type="file" id="photo-input" class="file-input">
+                                </div>
+                                <div class="form-group" th:if="${product.attachment==null}">
+                                    <label for="product-photo1">Product Photo:</label><br>
+                                    <label for="photo-input1">
+                                        <img alt="Product Photo" id="product-photo1" class="product-photo">
+                                    </label>
+                                    <input name="file" type="file" id="photo-input1" class="file-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="product-name">Product Name:</label>
+                                    <input th:value="${product.name}" type="text" id="product-name" name="name" class="form-control text-dark" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="product-price">Product Price:</label>
+                                    <input th:value="${product.price}" type="number" id="product-price" name="price" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="product-category">Product Category:</label>
+                                    <select id="product-category" name="categoryId" class="form-control" required>
+                                        <option th:text="${product.category.name}" selected th:value="${product.category.id}"></option>
+                                        <option th:if="${category.id!=product.category.id}" th:text="${category.name}" th:each="category : ${categories}" th:value="${category.id}"></option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-success" type="submit">Edit</button>
+                            </form>
+                        </div>
+                        <div th:if="${#strings.equals(button,'income')}">
+                            <a class="btn btn-primary mb-4" th:href="|/income?productId=${productId}|">Make income</a>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="incomeProduct :${incomeProducts}">
+                                        <td th:text="${incomeProduct.createdTime}"></td>
+                                        <td th:text="${incomeProduct.product.name}"></td>
+                                        <td th:text="${incomeProduct.price}"></td>
+                                        <td th:text="${incomeProduct.amount}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div th:if="${#strings.equals(button,'sale')}">
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Sale Time</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Product Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="sale : ${sales}">
+                                        <td th:text="${sale.saledAt}"></td>
+                                        <td th:text="${sale.product.name}"></td>
+                                        <td th:text="${sale.salePrice}"></td>
+                                        <td th:text="${sale.amount}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
