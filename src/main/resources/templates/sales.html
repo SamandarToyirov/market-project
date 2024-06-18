@@ -313,6 +313,7 @@
         <div class="col-8">
             <div class="container">
                 <div th:if="${basket!=null}" class="basket">
+                    <a href="/pdf/download">Download pdf</a>
                     <h2>Basket</h2>
                     <ul class="basket-list">
                         <li th:each="basketProduct : ${basket}" class="basket-item">

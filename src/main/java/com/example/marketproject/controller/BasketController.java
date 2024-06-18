@@ -5,6 +5,9 @@ import com.example.marketproject.entity.Basket;
 import com.example.marketproject.entity.Product;
 import com.example.marketproject.entity.Sale;
 import com.example.marketproject.repo.*;
+import com.example.marketproject.service.PDFService;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,7 @@ public class BasketController {
     private final ProductRepo productRepo;
     private final IncomeProductRepo incomeProductRepo;
     private final SaleRepo saleRepo;
+    private final PDFService pdfService;
 
     @GetMapping("/add")
     public String addBasket(HttpSession session, Model model){
@@ -111,9 +117,10 @@ public class BasketController {
     }
 
     @GetMapping("/purchase")
-    public String purchase(HttpSession session,Model model){
+    public String purchase(HttpSession session, Model model) throws IOException {
 
         Basket basket = (Basket) session.getAttribute("basket");
+
 
         for (var pr : basket.getReportDtoList()) {
 
